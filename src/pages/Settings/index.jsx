@@ -86,7 +86,7 @@ export const SettingsPage = () => {
 
   // console.log(colors);
   
-  console.log(allPalettes);
+  // console.log(allPalettes);
 
   return (
     <>
