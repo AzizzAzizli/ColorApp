@@ -1,4 +1,5 @@
 export const Router={
     home:"/",
-    setting:"/settings"
+    setting: "/settings",
+    detail:"/detail/:id"
 }

@@ -5,15 +5,27 @@ import { Button } from "../../components/buttons";
 import { globalStore } from "../../services";
 import { upperCase } from "../../utils";
 import { ToastContainer, toast } from "react-toastify";
+import ColorPicker from "react-pick-color";
+import { useNavigate } from "react-router";
+import { Router } from "../../constants/ROUTE";
+import { useSelector, useDispatch } from 'react-redux'
+import { setAllPalettes } from '../../store/colorRedux'
 
 const initialColorValue = { colorname: "", colorcode: "" };
 
 const initialGroupNameValue = "Unknown";
 
 export const SettingsPage = () => {
+
+  const dispatch = useDispatch()
+
+const navigate=useNavigate()
+
+  const [color, setColor] = useState("");
+
   const colorGroupRef = useRef();
 
-  let { colors, setColors, allPalettes, setAllPalettes } = globalStore();
+  // let {  allPalettes, setAllPalettes } = globalStore();
 
   const [colorData, setColorData] = useState(initialColorValue);
 
@@ -24,7 +36,10 @@ export const SettingsPage = () => {
   function handleColorDatas(e) {
     const name = e.target.name;
     const value = e.target.value;
+
     setColorData({ ...colorData, [name]: value });
+
+  
   }
 
   function setColorsFunc() {
@@ -62,7 +77,6 @@ export const SettingsPage = () => {
       paletGroupName: colorGroupName,
     };
 
-    setColors(colorPalet);
 
     colorGroupRef.current.value = "";
 
@@ -70,13 +84,17 @@ export const SettingsPage = () => {
 
     toast.success("Your palette has been saved");
 
-    setAllPalettes((prevPalettes) => [...prevPalettes, colorPalet]);
+    // setAllPalettes((prevPalettes) => [...prevPalettes, colorPalet]);
+    dispatch(setAllPalettes(colorPalet))
+
+setTimeout(() => {
+navigate(Router.home)
+}, 1000);
+
   }
   function colorCardDelete(index) {
-  setAllColors( allColors.filter((color, i) => i !== index) ) ;
-    
+    setAllColors(allColors.filter((color, i) => i !== index));
   }
-  
 
   // console.log(colorGroupName);
 
@@ -84,18 +102,20 @@ export const SettingsPage = () => {
 
   // console.log(colorData);
 
-  // console.log(colors);
-  
   // console.log(allPalettes);
+
+  // console.log(color);
 
   return (
     <>
       <ToastContainer />
       <Nav />
       <h1 className="h1 fw-bold text-secondary m-3">Setting Page</h1>
-      <p className=" text-warning fw-normal fs-5 m-3">You can delete the color card by touching on it </p>
-      <div className="w-100 container p-5">
-        <div className=" d-flex w-100 container  gap-3">
+      <p className=" text-warning fw-normal fs-5 m-3">
+        You can delete the color card by touching on it{" "}
+      </p>
+      <div className="w-100 container p-5 ">
+        <div className=" d-flex w-100 container p-0 gap-3">
           <div className=" d-flex flex-column gap-3 w-25 ">
             <input
               onChange={handleColorDatas}
@@ -114,6 +134,17 @@ export const SettingsPage = () => {
               className=" form-control"
             />
 
+            <ColorPicker
+              color={color}
+              onChange={(color) => {
+                setColor(color.hex);
+                setColorData((prev) => ({
+                  ...prev,
+                  colorcode: color.hex,
+                }));
+              }}
+            />
+
             <Button
               onClick={setColorsFunc}
               disabled={setColorBtnDisable()}
@@ -126,7 +157,11 @@ export const SettingsPage = () => {
             <p className="text-info h5">Group Name: {colorGroupName}</p>
             <div className=" p-3 d-flex flex-wrap gap-3">
               {allColors.map((color, index) => (
-                <ColorCard  onClick={()=>colorCardDelete(index)}  key={index + color.colorcode} {...color} />
+                <ColorCard
+                  onClick={() => colorCardDelete(index)}
+                  key={index + color.colorcode}
+                  {...color}
+                />
               ))}
             </div>
             <Button

@@ -1,14 +1,24 @@
 import React from "react";
 import { Nav } from "../../components/Nav";
-import { globalStore } from "../../services";
+// import { globalStore } from "../../services";
 import { ColorPalet } from "../../components/colorPalet";
 import { ToastContainer, toast } from "react-toastify";
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from "react-router";
+import { Router } from "../../constants/ROUTE";
 export const HomePage = () => {
-  const { allPalettes } = globalStore();
+
+const navigate=useNavigate();
+
+  const allPalettes = useSelector((state) => state.colorsRedux.allPalettes)
+
+console.log(allPalettes);
+  // const { allPalettes } = globalStore();
+
   function copyItemCode(code) {
     // console.log(code);
-    navigator.clipboard.writeText("#" + code);
-    toast.success("Copied to Clipboard: " + "#" + code);
+    navigator.clipboard.writeText(code);
+    toast.success("Copied to Clipboard: " + code);
   }
 
   return (
@@ -19,11 +29,11 @@ export const HomePage = () => {
         You can copy the color code by touching the color card
       </p>
 
-      {allPalettes.length ? (
-        <div className="  container mt-4">
-          {allPalettes.map((colorPalet, index) => (
-            <div className=" mb-5" key={index + colorPalet.paletGroupName}>
-              <p className=" text-info fs-3 fw-bold">
+      {allPalettes?.length ? (
+        <div className=" w-100 d-flex flex-wrap container mt-4 gap-4">
+          {allPalettes?.map((colorPalet, index) => (
+            <div className=" mb-5  justify-content-center" style={ {cursor:"pointer"}} key={index + colorPalet.paletGroupName}  onClick={()=>navigate("detail/palet="+index)}>
+              <p className=" text-secondary fs-5 mb-3 fw-bold">
                 Group Name: {colorPalet.paletGroupName}{" "}
               </p>
               <div>
